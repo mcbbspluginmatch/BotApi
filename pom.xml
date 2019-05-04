@@ -1,0 +1,183 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>me.asnxthaony</groupId>
+	<artifactId>botapi</artifactId>
+	<version>1.7.2</version>
+	<packaging>jar</packaging>
+	
+	<properties>
+		<!-- Environment properties -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+		
+		<!-- Dependencies versions -->
+		<spigot.version>1.8.8-R0.1-SNAPSHOT</spigot.version>
+		
+		<!-- Versioning properties -->
+		<project.outputName>BotApi</project.outputName>
+		<project.buildNumber>190501</project.buildNumber>
+		<project.versionCode>${project.version}-b${project.buildNumber}</project.versionCode>
+		<project.finalNameBase>${project.outputName}-${project.version}-b${project.buildNumber}</project.finalNameBase>
+		
+		<!-- Plugin description file properties -->
+		<pluginDescription.name>${project.outputName}</pluginDescription.name>
+		<pluginDescription.version>${project.versionCode}</pluginDescription.version>
+		<pluginDescription.main>${project.groupId}.${project.artifactId}.${pluginDescription.name}</pluginDescription.main>
+		<pluginDescription.author>liuhanwen</pluginDescription.author>
+	</properties>
+	
+	<build>
+		<defaultGoal>clean package</defaultGoal>
+		<!-- Little hack to make the shade plugin output a file with the right name -->
+		<finalName>${project.finalNameBase}-noshade</finalName>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources/</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		
+		<plugins>
+			<!-- Clean the target folder content -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.1.0</version>
+			</plugin>
+			<!-- Include resource files -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
+			</plugin>
+			<!-- Compile and include classes -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			<!-- Generate a jar containing classes and resources -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.1</version>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+				</configuration>
+			</plugin>
+			<!-- Generate a jar containing classes, resources and shaded libraries -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.2.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<!-- Don't create the reduced pom file, as we don't deploy the shaded jar -->
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<!-- Deploy the non shaded jar as main artifact -->
+							<shadedArtifactAttached>true</shadedArtifactAttached>
+							<!-- Use the base jar name, to help server owners download the right jar -->
+							<finalName>${project.finalNameBase}</finalName>
+							
+							<minimizeJar>true</minimizeJar>
+							<artifactSet>
+								<includes>
+									<include>org.eclipse.jetty:jetty-*:jar:*</include>
+									<include>javax.servlet:javax.servlet-api:jar:*</include>
+								</includes>
+							</artifactSet>
+							<filters>
+								<!-- Ignore manifest signatures for shading the project into an uber-jar to fix -->
+								<!-- "Invalid signature file digest for Manifest main attributes" -->
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Install the jars as artifacts into the local repository -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.2</version>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<repositories>
+		<repository>
+			<id>central</id>
+			<url>https://maven.aliyun.com/repository/central</url>
+		</repository>
+		<repository>
+			<id>spigotmc-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
+		</repository>
+		<repository>
+			<id>vault-repo</id>
+			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
+		</repository>
+		<repository>
+			<id>ess-repo</id>
+			<url>https://ci.ender.zone/plugin/repository/everything/</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<!-- Spigot API -->
+		<dependency>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot-api</artifactId>
+			<version>${spigot.version}</version>
+	  		<scope>provided</scope>
+		</dependency>
+		<!-- VaultAPI -->
+		<dependency>
+			<groupId>net.milkbowl.vault</groupId>
+			<artifactId>VaultAPI</artifactId>
+			<version>1.7</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- EssentialsX -->
+		<dependency>
+			<groupId>net.ess3</groupId>
+			<artifactId>EssentialsX</artifactId>
+			<version>2.16.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Jetty Server -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>9.4.17.v20190418</version>
+		</dependency>
+		<!-- Jetty Servlet -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>9.4.17.v20190418</version>
+		</dependency>
+	</dependencies>
+</project>

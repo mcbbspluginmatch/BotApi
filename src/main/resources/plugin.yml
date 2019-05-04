@@ -1,0 +1,9 @@
+name: ${pluginDescription.name}
+author: ${pluginDescription.author}
+main: ${pluginDescription.main}
+version: ${pluginDescription.version}
+depend: [Vault, Essentials]
+commands:
+  link:
+  fixlink:
+  check:
