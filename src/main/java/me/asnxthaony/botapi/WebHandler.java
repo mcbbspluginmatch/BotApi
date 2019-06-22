@@ -2,7 +2,6 @@ package me.asnxthaony.botapi;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -108,7 +107,7 @@ public class WebHandler extends AbstractHandler {
 				return;
 			}
 
-			String msg = new String(Base64.getDecoder().decode(URLDecoder.decode(message, "UTF-8")), "UTF-8");
+			String msg = new String(Base64.getDecoder().decode(message), "UTF-8");
 			msg = String.format("§2[CHAT] §r%s: %s", username,
 					ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', msg)));
 
@@ -126,8 +125,7 @@ public class WebHandler extends AbstractHandler {
 				return;
 			}
 
-			String command = new String(
-					Base64.getDecoder().decode(URLDecoder.decode(request.getParameter("command"), "UTF-8")), "UTF-8");
+			String command = new String(Base64.getDecoder().decode(request.getParameter("command")), "UTF-8");
 			if (command == null || command.isEmpty()) {
 				out.print(toJson(401, StringConsts.MISSING_ARGUMENTS));
 				return;

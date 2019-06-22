@@ -24,12 +24,9 @@ import net.milkbowl.vault.permission.Permission;
 public class BotApi extends JavaPlugin implements Listener {
 
 	/**
-	 * -1 —— 公众版 
-	 * 0 —— 星域世界 
-	 * 1 —— 星之都 
-	 * 2 —— 星梦之音
+	 * -1 —— 公众版 0 —— 星域世界 1 —— 星之都 2 —— 星梦之音
 	 */
-	public static final int brand = 1;
+	public static final int brand = 0;
 
 	public static Plugin plugin;
 
