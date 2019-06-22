@@ -29,7 +29,6 @@ public class WebHandler extends AbstractHandler {
 
 	private static final Gson GSON = new Gson();
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
