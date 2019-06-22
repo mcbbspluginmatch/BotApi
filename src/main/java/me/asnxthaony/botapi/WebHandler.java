@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -28,6 +29,7 @@ public class WebHandler extends AbstractHandler {
 
 	private static final Gson GSON = new Gson();
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -107,7 +109,7 @@ public class WebHandler extends AbstractHandler {
 				return;
 			}
 
-			String msg = new String(Base64.getDecoder().decode(message), "UTF-8");
+			String msg = StringEscapeUtils.unescapeHtml(new String(Base64.getDecoder().decode(message), "UTF-8"));
 			msg = String.format("§2[CHAT] §r%s: %s", username,
 					ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', msg)));
 
@@ -124,8 +126,8 @@ public class WebHandler extends AbstractHandler {
 				out.print(toJson(403, StringConsts.INVALID_API_TOKEN));
 				return;
 			}
-
-			String command = new String(Base64.getDecoder().decode(request.getParameter("command")), "UTF-8");
+			
+			String command = StringEscapeUtils.unescapeHtml(new String(Base64.getDecoder().decode(request.getParameter("command")), "UTF-8"));
 			if (command == null || command.isEmpty()) {
 				out.print(toJson(401, StringConsts.MISSING_ARGUMENTS));
 				return;
