@@ -53,28 +53,21 @@ public class WebHandler extends AbstractHandler {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				String prefix = "";
 
-				switch (BotApi.getPermissions().getPrimaryGroup(player)) {
-				case "SVIP+":
-					prefix = "[SVIP+]";
-					break;
-				case "svip":
-					prefix = "[SVIP]";
-					break;
-				default:
-					break;
-				}
+				/*
+				 * switch (BotApi.getPermissions().getPrimaryGroup(player)) { case "SVIP+":
+				 * prefix = "[SVIP+]"; break; case "svip": prefix = "[SVIP]"; break; default:
+				 * break; }
+				 */
 
 				String name = player.getName();
 				switch (name) {
-				case "qyh07":
-					prefix = "[星贵一]";
+				case "liuhanwen":
+					prefix = "[开发者]";
 					break;
-				case "--":
-					prefix = "[星贵二]";
-					break;
-				case "XianShou":
-					prefix = "[星贵三]";
-					break;
+				/*
+				 * case "qyh07": prefix = "[星贵一]"; break; case "--": prefix = "[星贵二]"; break;
+				 * case "XianShou": prefix = "[星贵三]"; break;
+				 */
 				default:
 					break;
 				}
