@@ -16,7 +16,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -26,7 +25,7 @@ import com.google.gson.Gson;
 
 public class WebHandler extends AbstractHandler {
 
-	private static final String API_TOKEN = "5XnkLtCxn52Tr9d2Vqzh7PaTs99LpCVx";
+	public static String API_TOKEN = "";
 
 	private static final Gson GSON = new Gson();
 
@@ -39,14 +38,9 @@ public class WebHandler extends AbstractHandler {
 
 		PrintWriter out = response.getWriter();
 
-		BotApi.log(String.format("%s \"%s %s?%s\"", request.getRemoteAddr(), request.getMethod(), target,
-				(request.getQueryString() != null) ? request.getQueryString() : ""));
-		// 148.70.60.44 "GET /onlinePlayers?t=20190501"
-
 		// String userAgent = request.getHeader("User-Agent");
 		String token = request.getParameter("token");
 		String username = request.getParameter("username");
-		String qq = request.getParameter("qq");
 		String message = request.getParameter("message");
 
 		switch (target) {
@@ -99,63 +93,25 @@ public class WebHandler extends AbstractHandler {
 			return;
 		case "/playerStats":
 			if (username == null) {
-				out.print(toJson(401, Constant.MISSING_ARGUMENTS));
+				out.print(toJson(401, StringConsts.MISSING_ARGUMENTS));
 				return;
 			}
 
 			// Map<String, String> map = new HashMap<String, String>();
 
 			return;
-		case "/linkAccount":
-			String userToken = request.getParameter("userToken");
-			qq = request.getParameter("qq");
-
-			if (username == null || userToken == null || qq == null) {
-				out.print(toJson(401, Constant.MISSING_ARGUMENTS));
-				return;
-			}
-
-			if (BotApi.getStatus(username) == 0) {
-				out.print(100); // 玩家不存在
-				return;
-			} else if (BotApi.getStatus(username) == 2) {
-				out.print(102); // 已绑定
-				return;
-			}
-
-			if (BotApi.getToken(username).equals(userToken)) {
-				Player targetPlayer = Bukkit.getServer().getPlayer(username);
-				if (targetPlayer != null) {
-					targetPlayer.removePotionEffect(PotionEffectType.BLINDNESS);
-					targetPlayer.sendMessage(Constant.dividingLine);
-					targetPlayer.sendMessage(Constant.emptyLine);
-					targetPlayer.sendMessage("§6§a你已成功完成绑定！");
-					targetPlayer.sendMessage(Constant.emptyLine);
-					targetPlayer.sendMessage(Constant.dividingLine);
-				}
-
-				BotApi.resetToken(username);
-				BotApi.setStatus(username, 2);
-				BotApi.setQQ(username, Long.valueOf(qq));
-
-				out.print(0); // 绑定成功
-				return;
-			} else {
-				out.print(101); // 密钥错误
-				return;
-			}
 		case "/v2/sendMessage":
 			if (token == null) {
-				out.print(toJson(401, Constant.MISSING_API_TOKEN));
+				out.print(toJson(401, StringConsts.MISSING_API_TOKEN));
 				return;
 			}
 			if (!token.equals(API_TOKEN)) {
-				out.print(toJson(403, Constant.INVALID_API_TOKEN));
+				out.print(toJson(403, StringConsts.INVALID_API_TOKEN));
 				return;
 			}
 
 			if (username == null || message == null) {
-				out.print(toJson(401, Constant.MISSING_ARGUMENTS));
+				out.print(toJson(401, StringConsts.MISSING_ARGUMENTS));
 				return;
 			}
 
@@ -169,18 +125,18 @@ public class WebHandler extends AbstractHandler {
 			return;
 		case "/runCommand":
 			if (token == null) {
-				out.print(toJson(401, Constant.MISSING_API_TOKEN));
+				out.print(toJson(401, StringConsts.MISSING_API_TOKEN));
 				return;
 			}
 			if (!token.equals(API_TOKEN)) {
-				out.print(toJson(403, Constant.INVALID_API_TOKEN));
+				out.print(toJson(403, StringConsts.INVALID_API_TOKEN));
 				return;
 			}
 
 			String command = new String(
 					Base64.getDecoder().decode(URLDecoder.decode(request.getParameter("command"), "UTF-8")), "UTF-8");
 			if (command == null || command.isEmpty()) {
-				out.print(toJson(401, Constant.MISSING_ARGUMENTS));
+				out.print(toJson(401, StringConsts.MISSING_ARGUMENTS));
 				return;
 			}
 
@@ -195,20 +151,12 @@ public class WebHandler extends AbstractHandler {
 			return;
 		case "/tps":
 			double tps = BotApi.getIEssentials().getTimer().getAverageTPS();
-			// "优化" tps
-			// if (tps <= 5) {
-			// tps = tps + 10;
-			// } else if (tps <= 10) {
-			// tps = tps + 5;
-			// } else if (tps <= 15) {
-			// tps = tps + 3;
-			// }
 
 			out.print(NumberUtil.formatDouble(tps));
 			return;
 		case "/getRank":
 			if (username == null) {
-				out.print(toJson(401, Constant.MISSING_ARGUMENTS));
+				out.print(toJson(401, StringConsts.MISSING_ARGUMENTS));
 				return;
 			}
 
@@ -221,39 +169,8 @@ public class WebHandler extends AbstractHandler {
 
 			out.print(BotApi.getPermissions().getPrimaryGroup("world", player).toLowerCase());
 			return;
-		case "/setUserQQ":
-			if (token == null) {
-				out.print(toJson(401, Constant.MISSING_API_TOKEN));
-				return;
-			}
-			if (!token.equals(API_TOKEN)) {
-				out.print(toJson(403, Constant.INVALID_API_TOKEN));
-				return;
-			}
-
-			if (username == null || qq == null) {
-				out.print(toJson(401, Constant.MISSING_ARGUMENTS));
-				return;
-			}
-
-			if (!BotApi.hasPlayedBefore(username)) {
-				out.print(100);
-				return;
-			}
-
-			if (BotApi.getStatus(username) == 2) {
-				out.print(101);
-				return;
-			}
-
-			BotApi.resetToken(username);
-			BotApi.setStatus(username, 2);
-			BotApi.setQQ(username, Long.valueOf(qq));
-
-			out.print(0);
-			return;
 		default:
-			out.print(toJson(404, Constant.INVALID_ACTION));
+			out.print(toJson(404, StringConsts.INVALID_ACTION));
 			break;
 		}
 
