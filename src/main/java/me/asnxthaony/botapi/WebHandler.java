@@ -138,7 +138,7 @@ public class WebHandler extends AbstractHandler {
 				return;
 			}
 
-			if (command.startsWith("minecraft:op")) {
+			if (command.startsWith("minecraft:op") || command.startsWith("minecraft:deop") || command.startsWith("minecraft:stop")) {
 				out.print(-1);
 				return;
 			}
