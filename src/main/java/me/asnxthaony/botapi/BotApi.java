@@ -126,7 +126,7 @@ public class BotApi extends JavaPlugin implements Listener {
 						break;
 					}
 				} catch (Exception e) {
-					
+
 				}
 			}
 		}.runTaskAsynchronously(this);

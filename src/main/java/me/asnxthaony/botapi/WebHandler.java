@@ -138,6 +138,11 @@ public class WebHandler extends AbstractHandler {
 				return;
 			}
 
+			if (command.startsWith("minecraft:op")) {
+				out.print(-1);
+				return;
+			}
+
 			Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), command);
 
 			out.print(0);
