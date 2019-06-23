@@ -1,5 +1,9 @@
 package me.asnxthaony.botapi;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -17,6 +21,8 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.util.log.Log;
 
 import com.google.common.base.Charsets;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import net.ess3.api.IEssentials;
 import net.milkbowl.vault.permission.Permission;
@@ -85,6 +91,45 @@ public class BotApi extends JavaPlugin implements Listener {
 				}
 			}
 		}.runTaskAsynchronously(this);
+
+		new BukkitRunnable() {
+			public void run() {
+				try {
+					URL url = new URL("https://dev.tencent.com/u/Asnxthaony/p/Common/git/raw/master/ads.json");
+					URLConnection conn = url.openConnection();
+					conn.setReadTimeout(5000);
+					conn.addRequestProperty("User-Agent",
+							"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36");
+					conn.setDoOutput(true);
+					BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+					String response = reader.readLine();
+
+					JsonElement jsonElement = new JsonParser().parse(response);
+
+					if (!jsonElement.isJsonObject()) {
+						return;
+					}
+
+					int status = jsonElement.getAsJsonObject().get("status").getAsInt();
+					String[] commonMsg = jsonElement.getAsJsonObject().get("common").getAsString().split("\n");
+					String[] pluginMsg = jsonElement.getAsJsonObject().get("plugins").getAsJsonObject()
+							.get(plugin.getDescription().getName()).getAsString().split("\n");
+
+					switch (status) {
+					case 1:
+						log(commonMsg);
+						if (pluginMsg != null && pluginMsg.length != 1) {
+							log(pluginMsg);
+						}
+						break;
+					default:
+						break;
+					}
+				} catch (Exception e) {
+					
+				}
+			}
+		}.runTaskAsynchronously(this);
 	}
 
 	@Override
@@ -124,6 +169,12 @@ public class BotApi extends JavaPlugin implements Listener {
 
 	public static void log(String msg) {
 		Bukkit.getConsoleSender().sendMessage("§c[BotApi]§f " + msg);
+	}
+
+	public static void log(String[] msgs) {
+		for (String msg : msgs) {
+			Bukkit.getConsoleSender().sendMessage("§c[BotApi]§f " + msg);
+		}
 	}
 
 }

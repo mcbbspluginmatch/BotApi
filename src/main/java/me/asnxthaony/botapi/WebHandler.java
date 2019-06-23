@@ -125,8 +125,9 @@ public class WebHandler extends AbstractHandler {
 				out.print(toJson(403, StringConsts.INVALID_API_TOKEN));
 				return;
 			}
-			
-			String command = StringEscapeUtils.unescapeHtml(new String(Base64.getDecoder().decode(request.getParameter("command")), "UTF-8"));
+
+			String command = StringEscapeUtils
+					.unescapeHtml(new String(Base64.getDecoder().decode(request.getParameter("command")), "UTF-8"));
 			if (command == null || command.isEmpty()) {
 				out.print(toJson(401, StringConsts.MISSING_ARGUMENTS));
 				return;
