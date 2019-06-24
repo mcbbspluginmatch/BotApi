@@ -2,6 +2,11 @@ package me.asnxthaony.botapi;
 
 import org.eclipse.jetty.util.log.Logger;
 
+/**
+ * 
+ * @author Asnxthaony
+ *
+ */
 public class JettyLogger implements Logger {
 
 	@Override

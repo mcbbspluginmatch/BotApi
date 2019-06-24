@@ -1,5 +1,10 @@
 package me.asnxthaony.botapi;
 
+/**
+ * 
+ * @author Asnxthaony
+ *
+ */
 public final class StringConsts {
 
 	public static final String INVALID_ACTION = "Invalid action";

@@ -9,6 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 
+/**
+ * 
+ * @author Asnxthaony
+ *
+ */
 public class WebErrorHandler extends ErrorHandler {
 
 	@Override

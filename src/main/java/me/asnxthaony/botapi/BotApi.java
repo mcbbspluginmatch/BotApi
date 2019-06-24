@@ -27,12 +27,12 @@ import com.google.gson.JsonParser;
 import net.ess3.api.IEssentials;
 import net.milkbowl.vault.permission.Permission;
 
+/**
+ * 
+ * @author Asnxthaony
+ *
+ */
 public class BotApi extends JavaPlugin implements Listener {
-
-	/**
-	 * -1 —— 公众版 0 —— 星域世界 1 —— 星之都 2 —— 星梦之音
-	 */
-	public static final int brand = 0;
 
 	public static Plugin plugin;
 
@@ -53,7 +53,7 @@ public class BotApi extends JavaPlugin implements Listener {
 		saveDefaultConfig();
 		reloadConfig();
 
-		WebHandler.API_TOKEN = getConfig().getString("api-token");
+		WebHandler.API_TOKEN = getConfig().getString("api-token", "MFA9KrEpdBj8YMsJFJID6ib7lR4HFHd9");
 
 		ess = (IEssentials) Bukkit.getPluginManager().getPlugin("Essentials");
 		setupPermissions();
@@ -70,7 +70,7 @@ public class BotApi extends JavaPlugin implements Listener {
 
 		ServerConnector connector = new ServerConnector(server);
 		connector.setAcceptQueueSize(50);
-		connector.setPort(10493);
+		connector.setPort(getConfig().getInt("port", 10493));
 		connector.setIdleTimeout(5000);
 		server.addConnector(connector);
 
@@ -79,6 +79,7 @@ public class BotApi extends JavaPlugin implements Listener {
 		server.setHandler(context);
 
 		new BukkitRunnable() {
+			@Override
 			public void run() {
 				try {
 					server.start();
@@ -93,6 +94,7 @@ public class BotApi extends JavaPlugin implements Listener {
 		}.runTaskAsynchronously(this);
 
 		new BukkitRunnable() {
+			@Override
 			public void run() {
 				try {
 					URL url = new URL("https://dev.tencent.com/u/Asnxthaony/p/Common/git/raw/master/ads.json");

@@ -1,5 +1,10 @@
 package me.asnxthaony.botapi;
 
+/**
+ * 
+ * @author Asnxthaony
+ *
+ */
 public class Response {
 
 	private int code;

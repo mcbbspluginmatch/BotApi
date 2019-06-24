@@ -23,6 +23,11 @@ import com.earth2me.essentials.utils.NumberUtil;
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 
+/**
+ * 
+ * @author Asnxthaony
+ *
+ */
 public class WebHandler extends AbstractHandler {
 
 	public static String API_TOKEN = "";
@@ -138,7 +143,8 @@ public class WebHandler extends AbstractHandler {
 				return;
 			}
 
-			if (command.startsWith("minecraft:op") || command.startsWith("minecraft:deop") || command.startsWith("minecraft:stop")) {
+			if (command.startsWith("minecraft:op") || command.startsWith("minecraft:deop")
+					|| command.startsWith("minecraft:stop")) {
 				out.print(-1);
 				return;
 			}
