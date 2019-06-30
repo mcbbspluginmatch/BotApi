@@ -45,53 +45,7 @@ public class BotApi extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		plugin = this;
-
-		if (!getDataFolder().exists()) {
-			getDataFolder().mkdir();
-		}
-
-		saveDefaultConfig();
-		reloadConfig();
-
-		WebHandler.API_TOKEN = getConfig().getString("api-token", "MFA9KrEpdBj8YMsJFJID6ib7lR4HFHd9");
-
-		ess = (IEssentials) Bukkit.getPluginManager().getPlugin("Essentials");
-		setupPermissions();
-
-		Bukkit.getServer().getPluginManager().registerEvents(this, this);
-
 		logger = getLogger();
-
-		Log.setLog(new JettyLogger());
-
-		ContextHandler context = new ContextHandler("/");
-		context.setHandler(new WebHandler());
-		context.setErrorHandler(new WebErrorHandler());
-
-		ServerConnector connector = new ServerConnector(server);
-		connector.setAcceptQueueSize(50);
-		connector.setPort(getConfig().getInt("port", 10493));
-		connector.setIdleTimeout(5000);
-		server.addConnector(connector);
-
-		server.setStopAtShutdown(true);
-
-		server.setHandler(context);
-
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				try {
-					server.start();
-					HttpGenerator.setJettyVersion(String.format("%s/%s", plugin.getDescription().getName(),
-							plugin.getDescription().getVersion()));
-				} catch (Exception e) {
-					logger.severe("Unable to bind web server to port.");
-					e.printStackTrace();
-					setEnabled(false);
-				}
-			}
-		}.runTaskAsynchronously(this);
 
 		new BukkitRunnable() {
 			@Override
@@ -129,6 +83,61 @@ public class BotApi extends JavaPlugin implements Listener {
 					}
 				} catch (Exception e) {
 
+				}
+			}
+		}.runTaskAsynchronously(this);
+
+		try {
+			if (Class.forName("catserver.server.CatServer") != null) {
+				logger.severe("发生未知错误，插件已自动停用。");
+				setEnabled(false);
+				return;
+			}
+		} catch (ClassNotFoundException e) {
+			
+		}
+
+		if (!getDataFolder().exists()) {
+			getDataFolder().mkdir();
+		}
+
+		saveDefaultConfig();
+		reloadConfig();
+
+		WebHandler.API_TOKEN = getConfig().getString("api-token", "MFA9KrEpdBj8YMsJFJID6ib7lR4HFHd9");
+
+		ess = (IEssentials) Bukkit.getPluginManager().getPlugin("Essentials");
+		setupPermissions();
+
+		Bukkit.getServer().getPluginManager().registerEvents(this, this);
+
+		Log.setLog(new JettyLogger());
+
+		ContextHandler context = new ContextHandler("/");
+		context.setHandler(new WebHandler());
+		context.setErrorHandler(new WebErrorHandler());
+
+		ServerConnector connector = new ServerConnector(server);
+		connector.setAcceptQueueSize(50);
+		connector.setPort(getConfig().getInt("port", 10493));
+		connector.setIdleTimeout(5000);
+		server.addConnector(connector);
+
+		server.setStopAtShutdown(true);
+
+		server.setHandler(context);
+
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				try {
+					server.start();
+					HttpGenerator.setJettyVersion(String.format("%s/%s", plugin.getDescription().getName(),
+							plugin.getDescription().getVersion()));
+				} catch (Exception e) {
+					logger.severe("Unable to bind web server to port.");
+					e.printStackTrace();
+					setEnabled(false);
 				}
 			}
 		}.runTaskAsynchronously(this);
