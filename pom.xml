@@ -6,7 +6,7 @@
 
 	<groupId>me.asnxthaony</groupId>
 	<artifactId>botapi</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 	<packaging>jar</packaging>
 	
 	<properties>
@@ -20,7 +20,7 @@
 		
 		<!-- Versioning properties -->
 		<project.outputName>BotApi</project.outputName>
-		<project.buildNumber>190630</project.buildNumber>
+		<project.buildNumber>190702</project.buildNumber>
 		<project.versionCode>${project.version}-b${project.buildNumber}</project.versionCode>
 		<project.finalNameBase>${project.outputName}-${project.version}-b${project.buildNumber}</project.finalNameBase>
 		

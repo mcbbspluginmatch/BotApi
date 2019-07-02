@@ -94,7 +94,7 @@ public class BotApi extends JavaPlugin implements Listener {
 				return;
 			}
 		} catch (ClassNotFoundException e) {
-			
+
 		}
 
 		if (!getDataFolder().exists()) {

@@ -78,7 +78,7 @@ public class WebHandler extends AbstractHandler {
 				}
 
 				if (player.isOp()) {
-					prefix = "[管理员]";
+					prefix += "[管理员]";
 				}
 
 				if (!BotApi.getIEssentials().getUser(player).isVanished()) {
